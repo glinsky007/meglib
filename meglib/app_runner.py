@@ -49,7 +49,7 @@ class AppRunner(HasTraits):
     app_type = Str('AppRunner', label='application', help='hidden, type of application')
     app_version = Str('0_1', label='version', help='hidden, application version as string')
     app_version_number = CFloat(0.1, label='version number', help='hidden, application version as number')
-    run_name = Str('run_1', label='run name')
+    run_name = Property(depends_on=['parm_file'], label='base run name')
     tmp_directory = Directory(join('~','tmp'), label='temporary directory', help='directory to hold temparary files')
     input_directory = Directory(join('~','data'), label='input directory', help='directory that hold input files')
     output_directory = Directory(join('~','tmp','output_directory'), label='output directory', help='directory to hold output files')
@@ -62,11 +62,13 @@ class AppRunner(HasTraits):
         '''
         return 'AppRunner', '0_01', 0.01
         
-    def __init__(self, parm_file=None):
+    def __init__(self, parm_file=None, **p):
         self.app_type, self.app_version, self.app_version_number = self.app_type_version()
         if not not parm_file:
             self.parm_file = parm_file
             self.load()
+        for name in p:
+            setattr(self, name, p[name])
     
     def __str__(self, space=''):
         if not self.print_variables:
@@ -79,6 +81,11 @@ class AppRunner(HasTraits):
             string += space + '  ' + name + ' = ' + str(getattr(self, name)) + '\n'
         return string
         
+    def _get_run_name(self):
+        (path, name) = os.path.split(os.path.expanduser(self.parm_file))
+        run_name, file_ext = os.path.splitext(name)
+        return run_name
+
     def default_print_variables(self, exclude=[]):
         '''
         Returns default variables to print and edit, and excludes the list
@@ -107,6 +114,7 @@ class AppRunner(HasTraits):
         output_variables.remove('print_variables')
         output_variables.remove('edit_exclude_variables')
         output_variables.remove('parm_file')
+        output_variables.remove('run_name')
         for variable in exclude:
             if variable in output_variables:
                 output_variables.remove(variable)
@@ -154,7 +162,7 @@ class AppRunner(HasTraits):
         converts the parameters from older versions
         ##### need to be extended with version specific code #####
         '''
-        print 'converted v' + data_dict['app_version'] + ' to v' + app_version
+        print 'converted v' + data_dict['app_version'] + ' to v' + self.app_version
         data_dict['app_version'] = self.app_version
         data_dict['app_version_number'] = self.app_version_number
         
@@ -193,6 +201,12 @@ class AppRunner(HasTraits):
             data_dict[attribute] = value.tolist()
             setattr(self, attribute, value.tolist())
             
+        if not data_dict.has_key('app_type'):
+            data_dict['app_type'] = self.app_type
+            data_dict['app_version'] = '0'
+            data_dict['app_version_number'] = 0
+            print 'File does not have an app_type,  Setting it to ' + self.app_type
+                            
         if self.app_type == data_dict['app_type']:
             if self.app_version <> data_dict['app_version']:
                 self.convert_parm(data_dict)
@@ -258,7 +272,7 @@ class AppRunner(HasTraits):
         file_group = Group(
                     Item('app_type', style='readonly'), Item('app_version', style='readonly'),
                     '_',
-                    'run_name',
+                    Item('run_name', style='readonly'),
                     '_',
                     'parm_file',
                     UItem('save_button'), UItem('load_button'), UItem('print_button'),
@@ -396,6 +410,10 @@ def test_app_runner():
     '''
     Some test commands on the use of the **AppRunner** and **DemoApp** classes
     '''
+    from os.path import expanduser, join
+    from meglib.app_runner import AppRunner, DemoApp, run_app_runner
+    import matplotlib.pyplot as plt
+    
     # print, edit, and save a AppRunner object
     p = AppRunner()
     print p
@@ -410,6 +428,9 @@ def test_app_runner():
     p.run()
     p.plot()
     p.save_figs()
+    
+    # open up and run AppRunner
+    run_app_runner()
     
     # print, edit, and save a DemoApp object
     p = DemoApp()
