@@ -247,66 +247,12 @@ class AppRunner(HasTraits):
     def _save_plots_button_fired(self):
         self.save_figs()
                                                                                               
-    def edit(self):
-        '''
-        This envokes a GUI editor of all the variables in self.print_variables
-        (default list is self.default_print_variables()).
-        '''
+    def _traits_tab_view(self, parm_variables):
         from traitsui.api import View, Group, Item, ListEditor, UItem, TextEditor, SetEditor, Tabbed
         from traitsui.menu import HelpButton
-        
+
         exclude=['output_directory','description','parm_file']
-        if not self.print_variables:
-            parm_variables = self.default_print_variables(exclude=exclude)
-        else:
-            parm_variables = self.print_variables
-            for variable in exclude:
-                if variable in parm_variables:
-                    parm_variables.remove(variable)
-        
-        run_group = Group(
-                    UItem('run_button'), UItem('plot_button'),
-                    UItem('save_plots_button'),
-                    label = 'run')
-        parm_group = Group(
-                    list(parm_variables),
-                    label = 'parameters')
-        file_group = Group(
-                    Item('app_type', style='readonly'), Item('app_version', style='readonly'),
-                    '_',
-                    Item('run_name', style='readonly'),
-                    '_',
-                    'parm_file',
-                    UItem('save_button'), UItem('load_button'), UItem('print_button'),
-                    '_',
-                    'output_directory', UItem('set_output_directory_button'),
-                    '_',
-                    Item('description', label='Description:',style='custom', height=10),
-                    label = 'file')
-        traits_tab_view = View(Tabbed(file_group, parm_group, run_group),
-                    title = self.app_type + ' v' + self.app_version,
-                    width = 600,
-                    height=800,
-                    resizable=True,
-                    buttons=[HelpButton],
-                    )
-        
-        self.edit_traits(traits_tab_view, scrollable=True)
-        
-    def edit_restricted(self):
-        '''
-        This envokes a restricted GUI editor of all the variables in self.print_variables
-        except for those in the list self.edit_exclude_variables,
-        (default self.print_variables is self.default_print_variables()).
-        '''
-        from traitsui.api import View, Group, Item, ListEditor, UItem, TextEditor, SetEditor, Tabbed
-        from traitsui.menu import HelpButton
-        
-        if not self.print_variables:
-            parm_variables = self.default_print_variables(exclude=['output_directory','description','parm_file'])
-        else:
-            parm_variables = self.print_variables
-        for variable in self.edit_exclude_variables:
+        for variable in exclude:
             if variable in parm_variables:
                 parm_variables.remove(variable)
                 
@@ -336,8 +282,37 @@ class AppRunner(HasTraits):
                     resizable=True,
                     buttons=[HelpButton],
                     )
+        return traits_tab_view
         
-        self.edit_traits(traits_tab_view, scrollable=True)
+    def edit(self):
+        '''
+        This envokes a GUI editor of all the variables in self.print_variables
+        (default list is self.default_print_variables()).
+        '''
+        
+        if not self.print_variables:
+            parm_variables = self.default_print_variables()
+        else:
+            parm_variables = self.print_variables.copy()
+               
+        self.edit_traits(self._traits_tab_view(parm_variables), scrollable=True)
+        
+    def edit_restricted(self):
+        '''
+        This envokes a restricted GUI editor of all the variables in self.print_variables
+        except for those in the list self.edit_exclude_variables,
+        (default self.print_variables is self.default_print_variables()).
+        '''
+        
+        if not self.print_variables:
+            parm_variables = self.default_print_variables()
+        else:
+            parm_variables = self.print_variables.copy()
+        for variable in self.edit_exclude_variables:
+            if variable in parm_variables:
+                parm_variables.remove(variable)
+                        
+        self.edit_traits(self._traits_tab_view(parm_variables), scrollable=True)
         
     def run(self):
         '''
