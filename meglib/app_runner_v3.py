@@ -266,7 +266,7 @@ class AppRunner(HasTraits):
         file_group = Group(
                     Item('app_type', style='readonly'), Item('app_version', style='readonly'),
                     '_',
-                    'run_name',
+                    Item('run_name', style='readonly'),
                     '_',
                     'parm_file',
                     UItem('save_button'), UItem('load_button'), UItem('print_button'),
