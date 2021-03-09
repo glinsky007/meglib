@@ -181,7 +181,7 @@ class AppRunner(HasTraits):
             output_variables = self.default_output_variables()
         else:
             output_variables = self.output_variables
-            
+        
         save_list = {}    
         for name in output_variables:
             save_list[name] = getattr(self, name)
@@ -197,7 +197,7 @@ class AppRunner(HasTraits):
         if not parm_file:
             parm_file = self.parm_file
 
-        data = np.load(str(expanduser(parm_file)))
+        data = np.load(str(expanduser(parm_file)), allow_pickle=True)
         data_dict = {}
         for attribute, value in data.items():
             data_dict[attribute] = value.tolist()
