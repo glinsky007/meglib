@@ -358,7 +358,7 @@ class DemoApp(AppRunner):
         if old_version_number < 1.0:
             self.parm_new = data_dict['parm1']  # parm_new did not exist before v1, default=parm1
         
-        AppRunner.update_parm(self, data_dict)
+        AppRunner.convert_parm(self, data_dict)
                 
     def run(self):
         print(self.parm1, self.parm2, self.parm3, self.parm_new)
@@ -388,7 +388,7 @@ def test_app_runner():
     Some test commands on the use of the **AppRunner** and **DemoApp** classes
     '''
     from os.path import expanduser, join
-    from meglib.app_runner import AppRunner, DemoApp, run_app_runner
+    from meglib.app_runner_v3 import AppRunner, DemoApp, run_app_runner
     import matplotlib.pyplot as plt
     
     # print, edit, and save a AppRunner object
