@@ -36,7 +36,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from traits.api import HasTraits, CFloat, CInt, Property, Range, Instance, Enum
-from traits.api import Str, Array, List, Button, File, Directory, Dict, Bool
+from traits.api import Str, Array, List, Button, File, Directory, Dict, Bool, CStr
 
 class AppRunner(HasTraits):
     '''
@@ -55,7 +55,7 @@ class AppRunner(HasTraits):
     tmp_directory = Directory(join('~','tmp'), label='temporary directory', help='directory to hold temparary files')
     input_directory = Directory(join('~','data'), label='input directory', help='directory that hold input files')
     output_directory = Directory(join('~','tmp','output_directory'), label='output directory', help='directory to hold output files')
-    description = Str('This is what Run #1 does', label='description of run')
+    description = CStr('This is what Run #1 does', label='description of run')
                 
     def app_type_version(self):
         '''
@@ -200,7 +200,11 @@ class AppRunner(HasTraits):
         data = np.load(str(expanduser(parm_file)), allow_pickle=True)
         data_dict = {}
         for attribute, value in data.items():
-            data_dict[attribute] = value.tolist()
+            # print(attribute, value.tolist())
+            if isinstance(value.tolist(), bytes):
+                data_dict[attribute] = value.tolist().decode()
+            else:
+                data_dict[attribute] = value.tolist()
             setattr(self, attribute, value.tolist())
             
         if not ('app_type' in data_dict):
