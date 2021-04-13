@@ -55,7 +55,7 @@ class AppRunner(HasTraits):
     tmp_directory = Directory(join('~','tmp'), label='temporary directory', help='directory to hold temparary files')
     input_directory = Directory(join('~','data'), label='input directory', help='directory that hold input files')
     output_directory = Directory(join('~','tmp','output_directory'), label='output directory', help='directory to hold output files')
-    description = CStr('This is what Run #1 does', label='description of run')
+    description = Str('This is what Run #1 does', label='description of run')
                 
     def app_type_version(self):
         '''
@@ -173,7 +173,8 @@ class AppRunner(HasTraits):
         Saves all the parameters to a compressed binary numpy file (NPZ file), *parm_file* 
         (default self.parm_file). This is not meant for large data, only meta data.
         The list of parameters saved is self.output_variables (default list is
-        self.default_output_variables())
+        self.default_output_variables()).  To maintain Python3 to Python2 compatibility change
+        protocol from 3 to 2 in pickle.dump() command in lib/python3.8/site-packages/numpy/lib/format.py.
         '''
         if not parm_file:
             parm_file = self.parm_file
@@ -202,10 +203,12 @@ class AppRunner(HasTraits):
         for attribute, value in data.items():
             # print(attribute, value.tolist())
             if isinstance(value.tolist(), bytes):
-                data_dict[attribute] = value.tolist().decode()
+                # print('decoding ' + attribute + ' . . .')
+                data_dict[attribute] = str(value.tolist().decode())
+                # print(attribute, data_dict[attribute])
             else:
                 data_dict[attribute] = value.tolist()
-            setattr(self, attribute, value.tolist())
+            setattr(self, attribute, data_dict[attribute])
             
         if not ('app_type' in data_dict):
             data_dict['app_type'] = self.app_type
