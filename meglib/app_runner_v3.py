@@ -21,6 +21,9 @@ model objects.  For data objects, the attributes will store the meta information
 and where the raw data can be stored.  Instead of run() and plot() methods, get_data() and set_data()
 methods need to be defined.
 
+To maintain Python3 to Python2 compatibility change protocol from 3 to 2 in pickle.dump() command in 
+lib/python_version/site-packages/numpy/lib/format.py.
+
 Updated in March 2021 to run under Python v3
 
 Copyright (c) 2018 Michael Glinsky, qiTech Consulting
@@ -174,7 +177,7 @@ class AppRunner(HasTraits):
         (default self.parm_file). This is not meant for large data, only meta data.
         The list of parameters saved is self.output_variables (default list is
         self.default_output_variables()).  To maintain Python3 to Python2 compatibility change
-        protocol from 3 to 2 in pickle.dump() command in lib/python3.8/site-packages/numpy/lib/format.py.
+        protocol from 3 to 2 in pickle.dump() command in lib/python_version/site-packages/numpy/lib/format.py.
         '''
         if not parm_file:
             parm_file = self.parm_file
@@ -384,7 +387,7 @@ def run_app_runner():
     '''
     Master procedure that evokes the AppRunner editor
     '''
-    from meglib.app_runner import AppRunner
+    from meglib.app_runner_v3 import AppRunner
     
     p = AppRunner()
     p.edit()
