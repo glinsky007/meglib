@@ -303,7 +303,7 @@ class AppRunner(HasTraits):
         if not self.print_variables:
             parm_variables = self.default_print_variables()
         else:
-            parm_variables = self.print_variables.copy()
+            parm_variables = self.print_variables
                
         self.edit_traits(self._traits_tab_view(parm_variables), scrollable=True)
         
