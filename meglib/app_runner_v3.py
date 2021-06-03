@@ -156,7 +156,7 @@ class AppRunner(HasTraits):
             shutil.rmtree(path)
         os.makedirs(path)
               
-    def list(self):
+    def list_all(self):
         self.print_traits()
         
     def print_parms(self):
