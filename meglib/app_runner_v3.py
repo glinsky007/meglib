@@ -200,6 +200,8 @@ class AppRunner(HasTraits):
         '''
         if not parm_file:
             parm_file = self.parm_file
+        else:
+            self.parm_file = parm_file
 
         data = np.load(str(expanduser(parm_file)), allow_pickle=True)
         data_dict = {}
