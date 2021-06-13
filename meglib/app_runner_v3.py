@@ -213,6 +213,14 @@ class AppRunner(HasTraits):
                 # print(attribute, data_dict[attribute])
             else:
                 data_dict[attribute] = value.tolist()
+            if isinstance(data_dict[attribute], list):
+                for i1, element_1 in enumerate(data_dict[attribute]):
+                    if isinstance(element_1, list):
+                        for i2, element_2 in enumerate(element_1):
+                            if isinstance(element_2, bytes):
+                                data_dict[attribute][i1][i2] = str(element_2.decode())
+                    elif isinstance(element_1, bytes):
+                        data_dict[attribute][i1] = str(element_1.decode())
             setattr(self, attribute, data_dict[attribute])
             
         if not ('app_type' in data_dict):
