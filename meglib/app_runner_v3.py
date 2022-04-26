@@ -266,6 +266,14 @@ class AppRunner(HasTraits):
     save_plots_button = Button('Save plots')
     def _save_plots_button_fired(self):
         self.save_figs()
+        
+    save_results_button = Button('Save Results')
+    def _save_results_button_fired(self):
+        self.save_results() 
+        
+    load_results_button = Button('Load Results')
+    def _load_results_button_fired(self):
+        self.load_results() 
                                                                                               
     def _traits_tab_view(self, parm_variables):
         from traitsui.api import View, Group, Item, ListEditor, UItem, TextEditor, SetEditor, Tabbed
@@ -278,7 +286,8 @@ class AppRunner(HasTraits):
                 
         run_group = Group(
                     UItem('run_button'), UItem('plot_button'),
-                    UItem('save_plots_button'),
+                    UItem('save_plots_button'), 
+                    UItem('save_results_button'), UItem('load_results_button'),
                     label = 'run')
         parm_group = Group(
                     list(parm_variables),
@@ -347,7 +356,20 @@ class AppRunner(HasTraits):
         ##### need to be replaced with app specific code #####
         '''
         pass
-
+       
+    def save_results(self):
+        '''
+        save the results of the calculation
+        ##### need to be replaced with app specific code #####
+        '''
+        pass
+        
+    def load_results(self):
+        '''
+        load the results of the calculation
+        ##### need to be replaced with app specific code #####
+        '''
+        pass
                                                                 
 class DemoApp(AppRunner):
     '''
