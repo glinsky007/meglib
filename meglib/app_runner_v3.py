@@ -138,14 +138,17 @@ class AppRunner(HasTraits):
             plt.figure(i)
             plt.savefig(expanduser(join(self.output_directory, file_root + '_%d.png' % i )))
        
-    def default_output_path(self, create_only=False):
+    def default_output_path(self, create_only=False, output_directory=None):
         '''
         Forms the default path for output of the results (~/tmp/output_directory_app_type_app_version_run_name/),
         then creates that directory if it does not exist and erases if it does exist (be careful).
         If *create_only*, it only creates it and erases if it does exist.
         '''
         if create_only:
-            path = self.output_directory
+            if not output_directory:
+                path = self.output_directory
+            else:
+                path = output_directory
         else:
             path = join('~','tmp','output_directory_' + self.app_type + '_' + self.app_version + '_' + self.run_name)
             self.output_directory = path
