@@ -277,7 +277,15 @@ class AppRunner(HasTraits):
     load_results_button = Button('Load Results')
     def _load_results_button_fired(self):
         self.load_results() 
+        
+    test_submit_button = Button('Submit test')
+    def _test_submit_button_fired(self):
+        self.submit(submit_jobs=False)
                                                                                               
+    submit_button = Button('Submit')
+    def _submit_button_fired(self):
+        self.submit()
+                                                                                               
     def _traits_tab_view(self, parm_variables):
         from traitsui.api import View, Group, Item, ListEditor, UItem, TextEditor, SetEditor, Tabbed
         from traitsui.menu import HelpButton
@@ -288,8 +296,8 @@ class AppRunner(HasTraits):
                 parm_variables.remove(variable)
                 
         run_group = Group(
-                    UItem('run_button'), UItem('plot_button'),
-                    UItem('save_plots_button'), 
+                    UItem('run_button'), UItem('test_submit_button'), UItem('submit_button'), 
+                    UItem('plot_button'), UItem('save_plots_button'), 
                     UItem('save_results_button'), UItem('load_results_button'),
                     label = 'run')
         parm_group = Group(
@@ -346,6 +354,11 @@ class AppRunner(HasTraits):
                         
         self.edit_traits(self._traits_tab_view(parm_variables), scrollable=True)
         
+    def submit(self, submit_jobs=True):
+        if self.submit_jobs:
+            self.default_output_path(create_only=True)
+            self.run()
+            
     def run(self):
         '''
         does the work, the core of the calculation
