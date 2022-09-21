@@ -288,7 +288,7 @@ class AppRunner(HasTraits):
                                                                                                
     def _traits_tab_view(self, parm_variables):
         from traitsui.api import View, Group, Item, ListEditor, UItem, TextEditor, SetEditor, Tabbed
-        from traitsui.menu import HelpButton
+        from traitsui.menu import HelpButton, OKButton
 
         exclude=['output_directory','description','parm_file']
         for variable in exclude:
@@ -320,7 +320,7 @@ class AppRunner(HasTraits):
                     width = 600,
                     height=800,
                     resizable=True,
-                    buttons=[HelpButton],
+                    buttons=[OKButton,HelpButton],
                     )
         return traits_tab_view
         
